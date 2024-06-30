@@ -3,6 +3,7 @@ package com.guardians.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
@@ -30,6 +31,7 @@ public class MovieDto {
     private String poster;
 
     @NotBlank(message = "Please provide poster url")
-    private String posterurl;
+    private String posterUrl;
+
 
 }
