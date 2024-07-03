@@ -15,6 +15,8 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String uploadFile(String path, MultipartFile file) throws IOException {
+
+
         // get name of the file
         String fileName=file.getOriginalFilename();
 
@@ -30,7 +32,7 @@ public class FileServiceImpl implements FileService {
 
         //copy the file  or upload file the path
 
-        Files.copy(file.getInputStream(), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(file.getInputStream(), Paths.get(filePath));
         return fileName;
     }
 

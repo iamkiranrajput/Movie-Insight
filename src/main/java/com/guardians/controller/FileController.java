@@ -30,7 +30,7 @@ public class FileController {
     @Value("${project.poster}")
     private String path;
 
-    @PostMapping("/upload")
+    @PostMapping("upload")
     public ResponseEntity<String> uploadFileHandler(@RequestPart MultipartFile file) throws IOException{
         String uploadedFileName = fileService.uploadFile(path,file);
         return ResponseEntity.ok("File Uploaded "+uploadedFileName);
@@ -39,7 +39,7 @@ public class FileController {
     @GetMapping("/{fileName}")
     public void serveFileHandler(@PathVariable String fileName, HttpServletResponse response) throws IOException {
         InputStream resourceFile = fileService.getResourceFile(path,fileName);
-        response.setContentType(MediaType.IMAGE_PNG_VALUE);
+        response.setContentType(String.valueOf(MediaType.ALL));
         StreamUtils.copy(resourceFile,response.getOutputStream());
     }
 
