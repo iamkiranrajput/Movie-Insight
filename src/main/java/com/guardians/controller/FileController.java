@@ -1,6 +1,7 @@
 package com.guardians.controller;
 
 
+import com.guardians.exception.EmptyFileException;
 import com.guardians.service.FileService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +32,10 @@ public class FileController {
     private String path;
 
     @PostMapping("upload")
-    public ResponseEntity<String> uploadFileHandler(@RequestPart MultipartFile file) throws IOException{
+    public ResponseEntity<String> uploadFileHandler(@RequestPart MultipartFile file) throws IOException, EmptyFileException {
+        if(file.isEmpty()){
+            throw new EmptyFileException("pleas add a file");
+        }
         String uploadedFileName = fileService.uploadFile(path,file);
         return ResponseEntity.ok("File Uploaded "+uploadedFileName);
     }
