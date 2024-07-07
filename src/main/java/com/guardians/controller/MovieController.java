@@ -11,6 +11,7 @@ import com.guardians.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -27,11 +28,16 @@ public class MovieController {
     }
 
 
+
+
+
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("add-movielist")
     public ResponseEntity<String> addMovieListHandler(@RequestBody List<MovieDto> movieDtoList) throws IOException {
         return  new ResponseEntity<>(movieService.addMovieList(movieDtoList),HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("add-movie")
     public ResponseEntity<MovieDto> addMovieHandler(@RequestPart MultipartFile file, @RequestPart String movieDto) throws IOException, EmptyFileException {
 
@@ -57,6 +63,8 @@ public class MovieController {
     public ResponseEntity<List<MovieDto>> getAllMovieHandler(){
         return ResponseEntity.ok(movieService.getAllMovies());
     }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/update/{movieId}")
     public ResponseEntity<MovieDto> updateMovieHandler(@PathVariable Integer movieId, @RequestPart MultipartFile file, @RequestPart String movieDtoObj) throws IOException {
 
@@ -65,6 +73,7 @@ public class MovieController {
         return ResponseEntity.ok((movieService.updateMovie(movieId,movieDto,file)));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/delete/{movieId}")
     public ResponseEntity<String> deleteMovieHandler(@PathVariable Integer movieId) throws IOException {
         return ResponseEntity.ok(movieService.deleteMovie(movieId));
