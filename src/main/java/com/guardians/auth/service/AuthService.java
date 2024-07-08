@@ -1,16 +1,16 @@
 package com.guardians.auth.service;
 
-
 import com.guardians.auth.entities.User;
 import com.guardians.auth.entities.UserRole;
 import com.guardians.auth.repositories.UserRepository;
 import com.guardians.auth.utils.AuthResponse;
 import com.guardians.auth.utils.LoginRequest;
 import com.guardians.auth.utils.RegisterRequest;
+import com.guardians.exception.UserAlreadyExistsException;
+import com.guardians.exception.UsernameNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +25,14 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse register(RegisterRequest registerRequest) {
+        // Check if user with the same username or email already exists
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+            throw new UserAlreadyExistsException("Username already exists: " + registerRequest.getUsername());
+        }
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new UserAlreadyExistsException("Email already exists: " + registerRequest.getEmail());
+        }
+
         var user = User.builder()
                 .name(registerRequest.getName())
                 .email(registerRequest.getEmail())
@@ -35,7 +43,7 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
         var accessToken = jwtService.generateToken(savedUser);
-        var refreshToken = refreshTokenService.createRefreshToken(savedUser.getEmail());
+        var refreshToken = refreshTokenService.createRefreshToken(savedUser.getUsername());
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
@@ -51,13 +59,20 @@ public class AuthService {
                 )
         );
 
-        var user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found!"));
-        var accessToken = jwtService.generateToken(user);
-        var refreshToken = refreshTokenService.createRefreshToken(loginRequest.getUsername());
+        var userOptional = userRepository.findByUsername(loginRequest.getUsername());
 
-        return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken.getRefreshToken())
-                .build();
+        if (userOptional.isPresent()) {
+            var user = userOptional.get();
+            var accessToken = jwtService.generateToken(user);
+            var refreshToken = refreshTokenService.createRefreshToken(loginRequest.getUsername());
+
+            return AuthResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken.getRefreshToken())
+                    .build();
+        } else {
+            throw new UsernameNotFoundException("User not found!");
+        }
     }
 }
+
