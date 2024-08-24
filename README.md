@@ -1,7 +1,7 @@
 # 🎥 Movie Insight API
 
-[https://elements.getpostman.com/redirect?entityId=33641536-d71b116a-d14c-4978-9ec6-326d44604598&entityType=collection
-](https://shorturl.at/MMTfr)
+https://shorturl.at/MMTfr
+
 ## Overview
 Movie Insight is a RESTful API designed to manage a movies. It supports CRUD operations, user authentication, pagination, sorting, and file uploads for movie posters.
 
