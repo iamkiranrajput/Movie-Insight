@@ -1,8 +1,5 @@
 # 🎥 Movie Insight API
 
-**Version:** CURRENT  
-**Language:** Java (Spring Boot)
-
 ## Overview
 Movie Insight is a RESTful API designed to manage a movies. It supports CRUD operations, user authentication, pagination, sorting, and file uploads for movie posters.
 
